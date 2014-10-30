@@ -455,6 +455,11 @@ __git_refs_remotes ()
 	done
 }
 
+__git_gerrit_branch () {
+	local i hash
+	git branch --all 2>/dev/null |sed 's!.*remotes/origin/!refs/for/!'
+
+}
 __git_remotes ()
 {
 	local i IFS=$'\n' d="$(__gitdir)"
@@ -1676,6 +1681,10 @@ _git_push ()
 	case "$cur" in
 	--repo=*)
 		__gitcomp_nl "$(__git_remotes)" "" "${cur##--repo=}"
+		return
+		;;
+	*:*)
+		__gitcomp_nl "$(__git_gerrit_branch)" "" "${cur##HEAD:}"
 		return
 		;;
 	--*)
