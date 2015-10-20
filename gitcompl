@@ -462,10 +462,9 @@ __git_gerrit_branch () {
 
    export REFS=`ssh $ORIGIN gerrit query --format=text change-id=$CHANGEID |egrep '(branch:|number:)' |sed -e 's%branch: %refs/for/%' -e 's%number: %refs/changes/%' |sed "s%^ *%%"`
 
+)
 [ "x$REFS" == "x" ] && (git branch --all |sed 's!.*remotes/\w*/!refs/for/!' |grep refs |sed 's% .*$%%') || echo "$REFS"
 
-)
-  # ~/tssc/cmdcmpl-git-push-hook || (git branch --all |sed 's!.*remotes/\w*/!refs/for/!' |grep refs |sed 's% .*$%%')
 }
 __git_remotes ()
 {
