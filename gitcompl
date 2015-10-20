@@ -456,9 +456,16 @@ __git_refs_remotes ()
 }
 
 __git_gerrit_branch () {
-	local i hash
-	git branch --all 2>/dev/null |sed 's!.*remotes/origin/!refs/for/!'
+   export CHANGEID=`git log -1 |grep Change-Id: |sed 's/.*: //'`
+   [ "x$CHANGEID" == "x" ] || (
+   export ORIGIN=`git config --get-regexp '.*url' | sed s%.*ssh://%% |sed s%/.*%%|sed "s%:% -p %"`
 
+   export REFS=`ssh $ORIGIN gerrit query --format=text change-id=$CHANGEID |egrep '(branch:|number:)' |sed -e 's%branch: %refs/for/%' -e 's%number: %refs/changes/%' |sed "s%^ *%%"`
+
+[ "x$REFS" == "x" ] && (git branch --all |sed 's!.*remotes/\w*/!refs/for/!' |grep refs |sed 's% .*$%%') || echo "$REFS"
+
+)
+  # ~/tssc/cmdcmpl-git-push-hook || (git branch --all |sed 's!.*remotes/\w*/!refs/for/!' |grep refs |sed 's% .*$%%')
 }
 __git_remotes ()
 {
