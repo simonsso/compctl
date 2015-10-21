@@ -457,13 +457,9 @@ __git_refs_remotes ()
 
 __git_gerrit_branch () {
    export CHANGEID=`git log -1 |grep Change-Id: |sed 's/.*: //'`
-   [ "x$CHANGEID" == "x" ] || (
    export ORIGIN=`git config --get-regexp '.*url' | sed s%.*ssh://%% |sed s%/.*%%|sed "s%:% -p %"`
-
-   export REFS=`ssh $ORIGIN gerrit query --format=text change-id=$CHANGEID |egrep '(branch:|number:)' |sed -e 's%branch: %refs/for/%' -e 's%number: %refs/changes/%' |sed "s%^ *%%"`
-
-)
-[ "x$REFS" == "x" ] && (git branch --all |sed 's!.*remotes/\w*/!refs/for/!' |grep refs |sed 's% .*$%%') || echo "$REFS"
+   [ "x$CHANGEID" == "x" ] || export REFS=`ssh $ORIGIN gerrit query --format=text change-id=$CHANGEID |egrep '(branch:|number:)' |sed -e 's%branch: %refs/for/%' -e 's%number: %refs/changes/%' |sed "s%^ *%%"`
+   [ "x$REFS" == "x" ] && (git branch --all |sed 's!.*remotes/\w*/!refs/for/!' |grep refs |sed 's% .*$%%') || echo "$REFS"
 
 }
 __git_remotes ()
