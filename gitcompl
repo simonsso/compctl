@@ -459,7 +459,7 @@ __git_gerrit_branch () {
    export CHANGEID=`git log -1 |grep Change-Id: |sed 's/.*: //'`
    export ORIGIN=`git config --get-regexp '.*url' | sed s%.*ssh://%% |sed s%/.*%%|sed "s%:% -p %"`
    export BRANCH=`(git branch |grep '^* '|sed 's!\*\ !!')`
-   [ "x$BRANCH" == "x" ] || export REFS=`(git config --get branch.$BRANCH.merge|sed 's!head!for!')`
+   [ "x$BRANCH" == "x" ] || export REFS=`(git config --get branch.$BRANCH.merge|sed 's!heads!for!')`
    [ "x$REFS" == "x" ]  &&   export REFS=`(git branch |grep -v ServerBranch  |sed 's!\*\ !refs/for/!' |grep refs |sed 's% .*$%%')`
 #   [ "x$CHANGEID" == "x" ] || export REFS=`ssh $ORIGIN gerrit query --format=text change-id=$CHANGEID |egrep '(branch:|number:)' |sed -e 's%branch: %refs/for/%' -e 's%number: %refs/changes/%' |sed "s%^ *%%"`
    [ "x$REFS" == "x" ] && (git branch --all |sed 's!.*remotes/\w*/!refs/for/!' |grep refs |sed 's% .*$%%') || echo "$REFS"
